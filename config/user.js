@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 2,
-        trim: true
+        trim: true,
     },
     emailId: {
         type: String,
@@ -22,34 +22,93 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         lowercase: true,
-        match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]
     },
     password: {
         type: String,
         required: true,
-        minlength: 6
-    },
-    age: {
-        type: Number,
-        min: 1,
+        minlength: 8,
     },
     gender: {
         type: String,
         enum: ["Male", "Female", "Other"],
-        required: true
     },
-    favouriteItems: {
-        type: [String],  // Array of strings for favorite items
+    dateOfBirth: {
+        type: Date,
+        required: false, // Set to true if you want it mandatory
+        validate: {
+            validator: function (value) {
+                return value < new Date(); // DOB should be in the past
+            },
+            message: "Date of birth must be a past date."
+        }
+    },    
+    promptContent: [
+        {
+            index: {
+                type: Number,
+                // required: true,
+            },
+            content: {
+                type: String,
+                required: true,
+                // trim: true,
+            }
+        }
+    ],
+    profilePicture: {
+        type: [String],
+        default: "/young-prince-royal-attire.png",
+    },
+    bio: {
+        type: String,
+        maxlength: 250
+    },
+    jobTitle: {
+        type: String,
+        trim: true,
+        maxlength: 100
+    },
+    companyName: {
+        type: String,
+        trim: true,
+        maxlength: 100
+    },
+    school: {
+        type: String,
+        trim: true,
+        maxlength: 100
+    },
+    livingIn: {
+        type: String,
+        trim: true,
+        maxlength: 100
+    },
+    skills: {
+        type: [String],
         default: []
+    },
+    socialLinks: {
+        github: { 
+            type: String, 
+            trim: true, 
+            match: [/^https?:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+$/, "Please enter a valid GitHub URL"] 
+        },
+        linkedin: { 
+            type: String, 
+            trim: true, 
+            match: [/^https?:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9_-]+$/, "Please enter a valid LinkedIn URL"] 
+        },
+        portfolio: { 
+            type: String, 
+            trim: true, 
+            match: [/^https?:\/\/.+$/, "Portfolio must be a valid URL"] 
+        }
     }
-});
+}, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
-    const user = this;
-    const passwordHash = user.password;
-    const isPasswordValid = await bcrypt.compare(passwordInputByUser , passwordHash);
-    return isPasswordValid;
-}
+    return await bcrypt.compare(passwordInputByUser, this.password);
+};
 
 userSchema.methods.getJWT = async function () {
     const user = this;
@@ -57,6 +116,5 @@ userSchema.methods.getJWT = async function () {
     return token;
 }
 
-const User = mongoose.model("User" , userSchema);
-
+const User = mongoose.model("User", userSchema);
 module.exports = User;

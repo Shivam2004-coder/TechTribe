@@ -5,8 +5,13 @@ const userAuth = async (req,res,next) => {
     try{
         // Read the token from the request cookies
         const {token} = req.cookies;
-        if (!token) {
-            throw new Error("Token not found!");
+        // if (!token) {
+        //     throw new Error("Token not found!");
+        // }
+        if ( !token ) {
+            return res.status(401).json({
+                message: "Please Login !!",
+            });
         }
 
         const decodedMessage = await jwt.verify(token , "TECH@tribe$790");

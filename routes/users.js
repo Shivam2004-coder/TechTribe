@@ -4,7 +4,7 @@ const {userAuth} = require("../middlewares/auth");
 const ConnectionRequestModel = require("../config/connectionRequestSchema");
 const User = require("../config/user");
 
-const USER_SAFE_DATA = [ "firstName" , "lastName" , "age" , "gender" , "favouriteItems" ];
+const USER_SAFE_DATA = [ "firstName" , "lastName" , "age" , "gender" , "profilePicture" , "bio" , "skills" , "socialLinks" ];
 
 // Get all the pending connection requests for the loggedIn User
 userRouter.get("/user/requests/received" , userAuth , async (req,res) => {
@@ -91,13 +91,9 @@ userRouter.get("/user/feed" , userAuth , async(req,res) => {
 
         const user = await User.find({
             _id: { $nin: Array.from(hideUsersFromFeed) },
-        }).select(USER_SAFE_DATA).skip(skip).limit(limit);
+        });
 
-        res.json({
-            message: "All the feed fetched successfully !!",
-            connectionRequests: connectionRequests,
-            ActualFeed: user
-        })
+        res.send(user);
 
     } catch (error) {
         res.status(404).json({

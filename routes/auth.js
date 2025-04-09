@@ -1,44 +1,92 @@
 const express = require("express");
 const User = require("../config/user");
-const { validationSignUpData } = require("../src/utils/validation");
+const { validateSignUpData } = require("../src/utils/validation");
 const bcrypt = require("bcrypt");
 // const jwt = require('jsonwebtoken');
 
 const authRouter = express.Router();
 
-authRouter.post("/signup" , async (req,res) => {
-    try{
-        console.log(req.body);
+authRouter.post("/signup", async (req, res) => {
+    try {
+      console.log(req.body);
+  
+      // validation of our data...
+      validateSignUpData(req);
+  
+      const { firstName, lastName, emailId, password } = req.body;
+  
+      // encrypting our password
+      const passwordHash = await bcrypt.hash(password, 10);
+  
+      // creating an instance of our User Model...
+      const user = new User({
+        firstName,
+        lastName,
+        emailId,
+        password: passwordHash,
+      });
+  
+      const savedUser = await user.save();
+      console.log("User Saved successfully");
+  
+      const token = await savedUser.getJWT();
+  
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 360000),
+      });
+  
+      return res.json({ message: "User Added Successfully !!", data: savedUser });
+  
+    } catch (err) {
+      console.error("Signup error:", err.message);
+      return res.status(400).send("Error saving the user: " + err.message);
+    }
+  });
+  
 
-        // validation of our data...
-        validationSignUpData(req);
+// authRouter.post("/signup" , async (req,res) => {
+//     try{
+//         console.log(req.body);
 
-        const {firstName , lastName , emailId , password , age , gender , favouriteItems} = req.body;
+//         // validation of our data...
+//         validateSignUpData(req);
 
-        // encrypting our password
-        const passwordHash = bcrypt.hash(password , 10);
+//         const {firstName , lastName , emailId , password } = req.body;
+
+//         // encrypting our password
+//         const passwordHash = bcrypt.hash(password , 10);
         
-        passwordHash.then( async (passwordHash) => {
-                // creating an instance of our User Model...
-                const user = new User({
-                    firstName ,
-                    lastName ,
-                    emailId,
-                    password:passwordHash,
-                    age,
-                    gender,
-                    favouriteItems
-                });
-                await user.save();
-                res.send("User Added Successfully !!");
-            })
+//         passwordHash.then( async (passwordHash) => {
+//                 // creating an instance of our User Model...
+//                 const user = new User({
+//                     firstName ,
+//                     lastName ,
+//                     emailId,
+//                     password:passwordHash,
+//                 });
+//                 const savedUser = await user.save();
+//                 // Create a JWT token
+//                 console.log("User Saved successfully");
+//                 const token = savedUser.getJWT();
+//                 token.then((token)=>{
+//                     res.cookie("token" , token , {
+//                         expires: new Date(Date.now() + 8 * 360000),
+//                     });
+        
+//                     // res.send(user);
+//                 })
+//                 .catch((err) => {
+//                     res.status(400).send("JWT token is not created !!");
+//                 })
+//                 res.json({message : "User Added Successfully !!" , data: savedUser});
+//             })
 
-    }
-    catch(err){
-        res.status(400).send("Error saving the user : "+ err.message);
-    }
+//     }
+//     catch(err){
+//         res.status(400).send("Error saving the user : "+ err.message);
+//     }
 
-});
+// });
 
 authRouter.post("/login" , async (req,res) => {
     try{
@@ -57,11 +105,13 @@ authRouter.post("/login" , async (req,res) => {
             // Create a JWT token
             const token = user.getJWT();
             token.then((token)=>{
-                console.log("Here it is : "+token);
+                // console.log("Here it is : "+token);
     
-                res.cookie("token" , token);
+                res.cookie("token" , token , {
+                    expires: new Date(Date.now() + 8 * 360000),
+                });
     
-                res.send("Login Successfull!!");
+                res.send(user);
             })
             .catch((err) => {
                 res.status(400).send("JWT token is not created !!");
