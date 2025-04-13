@@ -55,9 +55,12 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
-    profilePicture: {
-        type: [String],
-        default: "/young-prince-royal-attire.png",
+    profileImage: {
+        type: String,
+        default: "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344",
+    },
+    uploadedImages: {
+        type: [String]
     },
     bio: {
         type: String,
@@ -91,17 +94,14 @@ const userSchema = new mongoose.Schema({
         github: { 
             type: String, 
             trim: true, 
-            match: [/^https?:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+$/, "Please enter a valid GitHub URL"] 
         },
         linkedin: { 
             type: String, 
             trim: true, 
-            match: [/^https?:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9_-]+$/, "Please enter a valid LinkedIn URL"] 
         },
         portfolio: { 
             type: String, 
             trim: true, 
-            match: [/^https?:\/\/.+$/, "Portfolio must be a valid URL"] 
         }
     }
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
