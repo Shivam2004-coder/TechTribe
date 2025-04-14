@@ -4,9 +4,11 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const cloudinary = require("./src/utils/cloudinary");
+require('dotenv').config();
+
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN,
     credentials: true
 }));
 app.use(express.json());
@@ -25,7 +27,7 @@ app.use("/" , userRouter);
 connectDB()
     .then(() => {
         console.log("Database connection established ......");
-        app.listen(3000 , () => {
+        app.listen(process.env.PORT , () => {
             console.log("It is listening on port 3000");
         });
     })

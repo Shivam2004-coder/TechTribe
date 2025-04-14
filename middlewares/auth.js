@@ -15,7 +15,7 @@ const userAuth = async (req,res,next) => {
             });
         }
 
-        const decodedMessage = await jwt.verify(token , "TECH@tribe$790");
+        const decodedMessage = await jwt.verify(token , process.env.JWT_SECRET_KEY );
 
         const {_id} = decodedMessage;
 

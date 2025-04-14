@@ -41,8 +41,7 @@ authRouter.post("/signup", async (req, res) => {
       console.error("Signup error:", err.message);
       return res.status(400).send("Error saving the user: " + err.message);
     }
-  });
-  
+});  
 
 // authRouter.post("/signup" , async (req,res) => {
 //     try{

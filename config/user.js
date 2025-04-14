@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema({
     ],
     profileImage: {
         type: String,
-        default: "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344",
+        default: process.env.DEFAULT_PROFILE_IMAGE,
     },
     uploadedImages: {
         type: [String]
@@ -112,7 +112,7 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
 
 userSchema.methods.getJWT = async function () {
     const user = this;
-    const token = jwt.sign({_id:user._id},"TECH@tribe$790" , {expiresIn : '1d'});
+    const token = jwt.sign({_id:user._id}, process.env.JWT_SECRET_KEY , {expiresIn : '1d'});
     return token;
 }
 
