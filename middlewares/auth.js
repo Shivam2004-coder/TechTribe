@@ -8,7 +8,8 @@ const userAuth = async (req,res,next) => {
         // if (!token) {
         //     throw new Error("Token not found!");
         // }
-        if ( !token ) {
+        // console.log("Token : "+token);
+        if ( !token || token === "j:null" || token === "undefined" ) {
             return res.status(401).json({
                 message: "Please Login !!",
             });
