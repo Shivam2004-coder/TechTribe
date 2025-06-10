@@ -103,7 +103,14 @@ const userSchema = new mongoose.Schema({
             type: String, 
             trim: true, 
         }
-    }
+    },
+    isPremiumMember: {
+        type: Boolean,
+        default: false
+    },
+    membershipType: {
+        type: String,
+    },
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
