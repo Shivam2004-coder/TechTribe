@@ -59,7 +59,8 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
         validateWebhookSignature(
             JSON.stringify(req.body),
             webhookSignature, 
-            process.env.RAZORPAY_WEBHOOK_SECRET
+            // process.env.RAZORPAY_WEBHOOK_SECRET
+            "6b1c3d0f-2a"
         );
 
         if (!webhookSignature) {
