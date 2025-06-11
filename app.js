@@ -10,10 +10,11 @@ require('dotenv').config();
 
 const http = require("http");
 
-// app.use(cors({
-//     origin: process.env.CORS_ORIGIN,
-//     credentials: true
-// }));
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
