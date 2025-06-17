@@ -3,6 +3,7 @@ const {userAuth} = require("../middlewares/auth");
 const {validateEditProfileData} = require("../src/utils/validation");
 const cloudinary = require("../src/utils/cloudinary");
 const { v4: uuidv4 } = require('uuid'); // At the top
+require('dotenv').config(); // Must be here if this is the entry
 
 const profileRouter = express.Router();
 
@@ -29,7 +30,7 @@ profileRouter.post("/profile/delete/savedImages", userAuth, async (req, res) => 
         const currentUploadedImages = loggedInUser.uploadedImages;
         const userProfileImage = loggedInUser.profileImage;
 
-        if ( profileImage !== DEFAULT_PROFILE_IMAGE && !avatars.includes(profileImage) && profileImage !== userProfileImage  ) {
+        if ( profileImage !== process.env.DEFAULT_PROFILE_IMAGE && !avatars.includes(profileImage) && profileImage !== userProfileImage  ) {
             await cloudinary.uploader.destroy(profileImage);
         }
 
@@ -93,17 +94,19 @@ profileRouter.post("/profile/upload/image" , userAuth , async (req , res) => {
         const {image , isProfile} = req.body;
 
         const loggedInUser = req.user;
-
-
+        console.log("I am in image upload route !!");
         // Upload an image
         const uniqueId = uuidv4(); 
         const folderName = `TechTribe_User_Profile_Avatar/User_Images/${loggedInUser.firstName}_${loggedInUser._id}`;
         const publicId = isProfile ? `${loggedInUser.firstName}_Profile_Image_${uniqueId}` : `${loggedInUser.firstName}_Image_${uniqueId}`;
 
+        console.log("folderName : " + folderName);
+        console.log("publicId : " + publicId);
+
         const uploadResult = await cloudinary.uploader
         .upload(
             image, {
-                upload_preset: 'TechTribe_unsigned_upload',
+                // upload_preset: 'TechTribe_unsigned_upload',
                 public_id: publicId,
                 folder: folderName,
                 // folder: 'TechTribe_User_Profile_Avatar/Logos',
