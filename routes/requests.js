@@ -59,6 +59,11 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
     try {
         const loggedInUser = req.user;
         const {status , requestId} = req.params;
+        // console.log("I am in the request review route !!");
+        // console.log("LoggedIn User : "+loggedInUser._id);
+        // console.log("Requested User : "+requestId);
+        // console.log("Status: "+status);
+        
 
         // Validate the status
         const allowedStatus = ["accepted" , "rejected"];
@@ -69,11 +74,26 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
 
         
 
+        // const connectionRequest = await ConnectionRequestModel.findOne({
+        //     fromUserId: requestId,
+        //     toUserId: loggedInUser._id,
+        //     status: "interested"
+        // });
+
         const connectionRequest = await ConnectionRequestModel.findOne({
-            fromUserId: requestId,
-            toUserId: loggedInUser._id,
-            status: "interested"
+            $or: [
+                {
+                fromUserId: requestId,
+                toUserId: loggedInUser._id
+                },
+                {
+                fromUserId: loggedInUser._id,
+                toUserId: requestId
+                }
+            ],
+            status: { $in: ["interested", "accepted"] }
         });
+
 
         if (!connectionRequest) {
             return res.status(404).json({
