@@ -63,13 +63,19 @@ profileRouter.post("/profile/delete/image", userAuth, async (req, res) => {
 
         const isAvatar = (publicId) => {
             if (isProfile) {
-                return profileImage === publicId || avatars.includes(publicId) || publicId === "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344";   
+                return avatars.includes(publicId) || publicId === "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344";   
             }
-            return currentUploadedImages.includes(publicId);
+            return !currentUploadedImages.includes(publicId);
         };
-        
+
+        // console.log("I am in image delete route!!");
+        // console.log("UploadedImages: "+currentUploadedImages);
+        // console.log("publblicId : "+publicId);
+        // console.log("isProfile : "+isProfile);
+        // console.log("ProfileImage : "+ profileImage);
+        // console.log("avatars.includes(publicId) : "+avatars.includes(publicId));
         if (!isAvatar(publicId)) {
-            console.log("I am in image delete route!!");
+        
             console.log(publicId);
 
             const result = await cloudinary.uploader.destroy(publicId);
