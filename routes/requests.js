@@ -44,9 +44,15 @@ requestRouter.post("/request/send/:status/:toUserId" , userAuth , async (req,res
         });
         
         const data = await connectionRequest.save();
-        res.json({
-            message: req.user.firstName + " is " + status + " in " + toUser.firstName ,
-            data
+
+        // ✅ Increment swipe count
+        req.user.swipes = (req.user.swipes || 0) + 1;
+        await req.user.save();
+
+        return res.status(200).json({
+            message: `${req.user.firstName} is ${status} in ${toUser.firstName}`,
+            connectionData: data,
+            swipes: req.user.swipes
         });
     } 
     catch (error) {
@@ -116,6 +122,22 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
     catch (err) {
         res.status(400).send("ERROR : "+err.message);
     }
-})
+});
+requestRouter.post("/request/click" , userAuth , async (req,res) => {
+    try {
+        const loggedInUser = req.user;
+        const swipes = loggedInUser.swipes;
+        
+        loggedInUser.swipes = (swipes || 0) + 1; + 1;
+        await loggedInUser.save();
+        res.status(200).json({
+            message: "Number of swipes increased",
+            data: swipes + 1
+        });
+    }
+    catch (err) {
+        res.status(400).send("ERROR : "+err.message);
+    }
+});
 
 module.exports = requestRouter;

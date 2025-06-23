@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require('dotenv').config(); // Must be here if this is the entry
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -110,7 +111,12 @@ const userSchema = new mongoose.Schema({
     },
     membershipType: {
         type: String,
+        default: "Free"
     },
+    swipes: {
+        type: Number,
+        default: 0 // <-- Important!
+    }
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
