@@ -133,6 +133,17 @@ profileRouter.get("/profile/view" , userAuth , async (req,res) => {
     try{
         const user = req.user;
 
+        const now = new Date();
+        const lastSwipe = new Date(user.lastSwipeDate);
+
+        const isNewDay = now.toDateString() !== lastSwipe.toDateString();
+
+        if (isNewDay) {
+            user.swipes = 0;
+            user.lastSwipeDate = now;
+            await user.save(); // save only if swipes were reset
+        }
+
         res.send(user);
     }
     catch(err){

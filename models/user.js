@@ -105,10 +105,6 @@ const userSchema = new mongoose.Schema({
             trim: true, 
         }
     },
-    isPremiumMember: {
-        type: Boolean,
-        default: false
-    },
     membershipType: {
         type: String,
         default: "Free"
@@ -116,7 +112,11 @@ const userSchema = new mongoose.Schema({
     swipes: {
         type: Number,
         default: 0 // <-- Important!
-    }
+    },
+    lastSwipeDate: {
+        type: Date,
+        default: new Date(),
+    },
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {

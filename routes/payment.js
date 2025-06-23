@@ -75,7 +75,6 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
 
         // update the user as premium member
         const user = await User.findById({ _id: payment.userId });
-        user.isPremiumMember = true;
         user.membershipType = payment.notes.membershipType;
         await user.save();
         
@@ -101,7 +100,7 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
 
 paymentRouter.get("/payment/verify", userAuth, async (req, res) => {
     const user = req.user.toJSON();
-    if (user.isPremiumMember) {
+    if (user.membershipType !== "Free") {
         return res.json({ isPremiumMember: true });
     }
     return res.json({ isPremiumMember: false});
