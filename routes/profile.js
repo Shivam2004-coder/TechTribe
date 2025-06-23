@@ -133,7 +133,18 @@ profileRouter.get("/profile/view" , userAuth , async (req,res) => {
     try{
         const user = req.user;
 
+        // 🔁 Check if premium membership has expired
         const now = new Date();
+        if (
+            user.membershipType !== "Free" &&
+            user.membershipExpiresAt &&
+            new Date(user.membershipExpiresAt) < now
+        )
+        {
+            user.membershipType = "Free";
+            user.membershipExpiresAt = undefined;
+        }
+
         const lastSwipe = new Date(user.lastSwipeDate);
 
         const isNewDay = now.toDateString() !== lastSwipe.toDateString();

@@ -109,6 +109,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "Free"
     },
+    membershipExpiresAt: {
+        type: Date,
+        default: null // or undefined until user purchases a premium plan
+    },
     swipes: {
         type: Number,
         default: 0 // <-- Important!

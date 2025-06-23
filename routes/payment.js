@@ -7,16 +7,29 @@ const membershipLevels = require('../src/utils/constants');
 const {validateWebhookSignature} = require('razorpay/dist/utils/razorpay-utils');
 const User = require('../models/user');
 
+const membershipDurationDays = {
+  P1W: 7,
+  P2W: 21,
+  P1M: 30,
+  P2M: 90,
+  P3M: 180,
+  E1W: 7,
+  E2W: 21,
+  E1M: 30,
+  E2M: 90,
+  E3M: 180
+};
+
 
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     try{
         // console.log("Razorpay Keys:", process.env.RAZORPAY_KEY_ID, process.env.RAZORPAY_KEY_SECRET);
 
-        const { membershipType } = req.body;
+        const { membershipType , membershipDetail } = req.body;
         const{ firstName, lastName , emailId } = req.user;
 
         const order = await razorpayInstance.orders.create({
-            amount: membershipLevels[membershipType] * 100, // Convert from rupees to paise
+            amount: membershipDetail.amount, // Convert from rupees to paise
             currency: "INR",
             receipt: "receipt#1",
             notes: {
@@ -24,6 +37,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
                 lastName,
                 emailId,
                 membershipType: membershipType ,
+                membershipPlanIdx: membershipDetail.idx,
+                validity: membershipDetail.label
             },
         });
 
@@ -39,6 +54,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
                 firstName: order.notes.firstName,
                 lastName: order.notes.lastName,
                 membershipType: order.notes.membershipType,
+                membershipPlanIdx: order.notes.membershipPlanIdx,
+                validity: order.notes.validity
             },
         });
 
@@ -76,6 +93,12 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
         // update the user as premium member
         const user = await User.findById({ _id: payment.userId });
         user.membershipType = payment.notes.membershipType;
+
+        // ✅ Use the hash map for expiry duration
+        const planIdx = payment.notes?.membershipPlanIdx; // You need to pass this from frontend
+        const durationInDays = membershipDurationDays[planIdx] || 0;
+        user.membershipExpiresAt = new Date(Date.now() + durationInDays * 24 * 60 * 60 * 1000);
+
         await user.save();
         
         if (req.body.event === 'payment.captured') {
