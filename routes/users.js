@@ -4,7 +4,26 @@ const {userAuth} = require("../middlewares/auth");
 const ConnectionRequestModel = require("../models/connectionRequestSchema");
 const User = require("../models/user");
 
-const USER_SAFE_DATA = [ "firstName" , "lastName" , "dateOfBirth" , "gender" , "promptContent" , "livingIn" , "profileImage" , "uploadedImages" , "bio" , "jobTitle" , "companyName" , "school", "skills" , "socialLinks" , "membershipType" ];
+const USER_SAFE_DATA = [ 
+    "firstName" , 
+    "lastName" , 
+    "dateOfBirth" , 
+    "gender" , 
+    "promptContent" , 
+    "livingIn" , 
+    "profileImage" , 
+    "uploadedImages" , 
+    "bio" , 
+    "jobTitle" , 
+    "companyName" , 
+    "school", 
+    "skills" , 
+    "socialLinks" , 
+    "membershipType" ,
+    "chatThemeImage",
+    "wallpaperImage",
+    "displayMode"
+];
 
 // Get all the pending connection requests for the loggedIn User
 userRouter.get("/user/requests/received" , userAuth , async (req,res) => {

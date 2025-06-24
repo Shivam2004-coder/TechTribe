@@ -121,6 +121,18 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: new Date(),
     },
+    chatThemeImage: {
+        type: String,
+        default: '',
+    },
+    wallpaperImage: {
+        type: String,
+        default: '',
+    },
+    displayMode: {
+        type: String,
+        default: '',
+    }
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {

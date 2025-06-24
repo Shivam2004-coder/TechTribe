@@ -30,6 +30,10 @@ const validateEditProfileData = (req) => {
     "livingIn",
     "skills", // ['JavaScript', 'React', ...]
     "socialLinks",
+    "membershipType" ,
+    "chatThemeImage",
+    "wallpaperImage",
+    "displayMode"
   ];
   const isEditAllowed = Object.keys(req.body).every((field) =>
     allowedEditFields.includes(field)

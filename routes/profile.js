@@ -168,6 +168,9 @@ profileRouter.patch("/profile/edit" , userAuth , async (req,res) => {
             throw new Error("Invalid Edit Request !!");
         }
 
+        console.log("i am in the profile edit route !!");
+        console.log("REQ body : "+req.body);
+
         const loggedInUser = req.user;
     
         Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
