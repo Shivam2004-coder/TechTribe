@@ -123,7 +123,7 @@ const userSchema = new mongoose.Schema({
     },
     chatThemeImage: {
         type: String,
-        default: '',
+        default: process.env.DEFAULT_CHAT_THEME
     },
     wallpaperImage: {
         type: String,
