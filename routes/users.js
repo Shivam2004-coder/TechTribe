@@ -4,7 +4,7 @@ const {userAuth} = require("../middlewares/auth");
 const ConnectionRequestModel = require("../models/connectionRequestSchema");
 const User = require("../models/user");
 
-const USER_SAFE_DATA = [ "firstName" , "lastName" , "dateOfBirth" , "gender" , "promptContent" , "livingIn" , "profileImage" , "uploadedImages" , "bio" , "jobTitle" , "companyName" , "school", "skills" , "socialLinks" ];
+const USER_SAFE_DATA = [ "firstName" , "lastName" , "dateOfBirth" , "gender" , "promptContent" , "livingIn" , "profileImage" , "uploadedImages" , "bio" , "jobTitle" , "companyName" , "school", "skills" , "socialLinks" , "membershipType" ];
 
 // Get all the pending connection requests for the loggedIn User
 userRouter.get("/user/requests/received" , userAuth , async (req,res) => {
@@ -26,6 +26,29 @@ userRouter.get("/user/requests/received" , userAuth , async (req,res) => {
     }
 
 });
+
+// Get all the sent request based on the status
+userRouter.get("/user/sent/requests/:status" , userAuth , async (req , res) => {
+    try {
+        const loggedInUser = req.user;
+        const status = req.params.status;
+
+        const connectionRequests = await ConnectionRequestModel.find({
+            fromUserId: loggedInUser._id,
+            status: status
+        }).populate("toUserId" , USER_SAFE_DATA );
+
+        res.json({
+            message: "Data fetched Successfully",
+            data: connectionRequests
+        })
+
+    } catch (error) {
+        res.status(400).send("ERROR : "+error.message);
+    }
+
+
+})
 
 userRouter.get("/user/requests/connections" , userAuth , async (req , res) => {
     try {

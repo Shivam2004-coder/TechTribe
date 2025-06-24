@@ -72,7 +72,7 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
         
 
         // Validate the status
-        const allowedStatus = ["accepted" , "rejected"];
+        const allowedStatus = ["accepted" , "rejected" , "ignored" , "interested"];
 
         if(!allowedStatus.includes(status)){
             return res.status(400).send("Status not allowed !!");
@@ -89,16 +89,19 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
         const connectionRequest = await ConnectionRequestModel.findOne({
             $or: [
                 {
-                fromUserId: requestId,
-                toUserId: loggedInUser._id
+                    fromUserId: requestId,
+                    toUserId: loggedInUser._id
                 },
                 {
-                fromUserId: loggedInUser._id,
-                toUserId: requestId
+                    fromUserId: loggedInUser._id,
+                    toUserId: requestId
                 }
             ],
-            status: { $in: ["interested", "accepted"] }
+            // status: { $in: ["interested", "accepted"] }
         });
+
+        console.log("I am in the request review route !!");
+        console.log("connection : "+connectionRequest);
 
 
         if (!connectionRequest) {
@@ -123,6 +126,7 @@ requestRouter.post("/request/review/:status/:requestId" , userAuth , async (req,
         res.status(400).send("ERROR : "+err.message);
     }
 });
+
 requestRouter.post("/request/click" , userAuth , async (req,res) => {
     try {
         const loggedInUser = req.user;
