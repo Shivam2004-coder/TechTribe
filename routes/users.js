@@ -20,6 +20,7 @@ const USER_SAFE_DATA = [
     "skills" , 
     "socialLinks" , 
     "membershipType" ,
+    "membershipExpiresAt",
     "chatThemeImage",
     "wallpaperImage",
     "displayMode"
@@ -109,10 +110,10 @@ userRouter.get("/user/feed" , userAuth , async(req,res) => {
 
         const loggedInUser = req.user;
 
-        const page = parseInt(req.query.page) || 1;
-        let limit = parseInt(req.query.limit) || 10;
-        limit = limit > 50 ? 50 : limit;
-        const skip = (page - 1) * limit;
+        // const page = parseInt(req.query.page) || 1;
+        // let limit = parseInt(req.query.limit) || 10;
+        // limit = limit > 50 ? 50 : limit;
+        // const skip = (page - 1) * limit;
 
         // Find all the connection request (sent + received)
 
@@ -131,17 +132,43 @@ userRouter.get("/user/feed" , userAuth , async(req,res) => {
 
         console.log(hideUsersFromFeed);
 
-        const user = await User.find({
+        let users = await User.find({
             $and: [
-              { _id: { $nin: Array.from(hideUsersFromFeed) } },
-              { _id: { $ne: loggedInUser._id } },
+                { _id: { $nin: Array.from(hideUsersFromFeed) } },
+                { _id: { $ne: loggedInUser._id } },
             ],
-          })
-            .select(USER_SAFE_DATA)
-            .skip(skip)
-            .limit(limit);
+        })
+        .select(USER_SAFE_DATA);
 
-        res.send(user);
+        // Sort users: 
+        // 1. Elite first
+        // 2. Among Elites, later membershipExpiresAt first
+        users.sort((a, b) => {
+            const isEliteA = a.membershipType === "Elite";
+            const isEliteB = b.membershipType === "Elite";
+
+            if (isEliteA && !isEliteB) return -1;
+            if (!isEliteA && isEliteB) return 1;
+
+            if (isEliteA && isEliteB) {
+                const dateA = new Date(a.membershipExpiresAt || 0);
+                const dateB = new Date(b.membershipExpiresAt || 0);
+                return dateB - dateA; // Farther expiry comes first
+            }
+
+            // Otherwise keep as is (same priority)
+            return 0;
+        });
+
+        // Now apply pagination AFTER sorting
+        const page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        limit = limit > 50 ? 50 : limit;
+        const skip = (page - 1) * limit;
+
+        const paginatedUsers = users.slice(skip, skip + limit);
+
+        res.send(paginatedUsers);
 
     } catch (error) {
         res.status(404).json({
