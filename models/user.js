@@ -127,11 +127,11 @@ const userSchema = new mongoose.Schema({
     },
     wallpaperImage: {
         type: String,
-        default: '',
+        default: process.env.DEFAULT_WALLPAPER,
     },
     displayMode: {
         type: String,
-        default: '',
+        default:  process.env.DEFAULT_DISPLAY_MODE,
     }
 }, { timestamps: true }); // Adds 'createdAt' and 'updatedAt'
 
