@@ -43,10 +43,13 @@ const initializeSocket = (server) => {
                     });  
                 }
 
-                chat.messages.push({
+               const newMessage = {
                     senderId: userId,
                     text: text,
-                });
+                    createdAt: new Date(),
+                };
+
+                chat.messages.push(newMessage);
                 chat.save()
                     .then(() => {
                         console.log("Message saved to database.");
@@ -55,7 +58,11 @@ const initializeSocket = (server) => {
                         console.error("Error saving message: ", err);
                     });
 
-                io.to(roomId).emit("messageReceived" , {firstName , text});
+                io.to(roomId).emit("messageReceived" , {
+                    firstName , 
+                    text , 
+                    timestamp: newMessage.createdAt
+                });
 
             } catch (error) {
                 console.error("Error saving message to database: ", error.message);
