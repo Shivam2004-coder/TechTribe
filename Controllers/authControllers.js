@@ -34,6 +34,7 @@ exports.manualSignUp = async (req, res) => {
     
         return res.status(200).json({ 
             message: "User Added Successfully !!", 
+            token
         });
   
     } catch (err) {
@@ -67,19 +68,28 @@ exports.manualSignIn = async (req,res) => {
                     expires: new Date(Date.now() + 8 * 360000),
                 });
     
-                res.send(user);
+                res.status(200).json({
+                    message: "You are successfully Logged In",
+                    token
+                });
             })
             .catch((err) => {
-                res.status(400).send("JWT token is not created !!");
+                res.status(400).json({
+                    message: "JWT token is not created !!"
+                });
             })
         }
         else{
-            res.send("Password is not Valid !!");
+            res.status(400).json({
+                message: "Password is not Valid !!",
+            });
         }
 
     }
     catch(err){
-        res.status(400).send("ERROR : "+err.message);
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
     }
 }
 exports.googleSignIn = async (req, res) => {
