@@ -161,7 +161,10 @@ exports.usersFeed = async(req,res) => {
 
         const paginatedUsers = users.slice(skip, skip + limit);
 
-        res.send(paginatedUsers);
+        res.status(200).json({
+            paginatedUsers,
+            message: "User Feed Fetched Successfully"
+        });
 
     } catch (error) {
         res.status(404).json({

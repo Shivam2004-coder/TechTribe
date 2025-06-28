@@ -23,10 +23,14 @@ exports.deleteSavedImages = async (req, res) => {
             await cloudinary.uploader.destroy(publicId);
         }
 
-        res.status(200).json({ message: "Deleted unused images successfully." });
+        res.status(200).json({ 
+            message: "Deleted unused images successfully." 
+        });
     } catch (error) {
         console.error("Error deleting images:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ 
+            message: "Error in saving your images." 
+        });
     }
 };
 
@@ -35,7 +39,9 @@ exports.deleteSingleImage = async (req, res) => {
         const { publicId , isProfile } = req.body;
 
         if (!publicId) {
-            return res.status(400).json({ error: "publicId is required to delete the image." });
+            return res.status(400).json({ 
+                message: "publicId is required to delete the image." 
+            });
         }
         
         const loggedInUser = req.user;
@@ -72,7 +78,9 @@ exports.deleteSingleImage = async (req, res) => {
 
     } catch (error) {
         console.error("Image delete error:", error);
-        res.status(500).json({ error: "Internal server error while deleting image." });
+        res.status(500).json({ 
+            message: "Error occurred while deleting image." 
+        });
     }
 };
 
@@ -101,12 +109,20 @@ exports.uploadAnImage = async (req , res) => {
             }
         )
         if (!uploadResult) {
-            return res.status(500).send("Failed to upload image to Cloudinary.");
+            return res.status(500).json({
+                message: "Failed to upload your image."
+            });
         }
-        res.status(200).send(uploadResult);
+        res.status(200).json({
+            uploadResult,
+            message: "Image uploaded Successfully"
+        });
         
     } catch (error) {
-        res.status(401).send(error.message);
+        console.error("Image delete error:", error);
+        res.status(500).json({ 
+            message: "Unable to upload your image." 
+        });
     }
 };
 
@@ -136,10 +152,15 @@ exports.profileView = async (req,res) => {
             await user.save(); // save only if swipes were reset
         }
 
-        res.send(user);
+        res.status(200).json({
+            user,
+            message: "Profile Fetched Successfully"
+        });
     }
     catch(err){
-        res.status(400).send("ERROR : "+err.message);
+        res.status(400).json({
+            message: err.message
+        });
     }
 };
 
@@ -164,6 +185,8 @@ exports.profileEdit = async (req,res) => {
         });
     }
     catch(err){
-        res.status(400).send("ERROR : "+err.message);
+        res.status(400).json({
+            message: err.message
+        });
     }
 };
