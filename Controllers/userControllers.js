@@ -1,5 +1,11 @@
+require('dotenv').config(); // Must be here if this is the entry
 const ConnectionRequestModel = require("../models/connectionRequestSchema");
+const { Chat } = require("../models/chat");
+const Contact = require("../models/contact");
 const User = require("../models/user");
+const DeletedUserFeedback = require('../models/DeletedUserFeedback');
+const cloudinary = require("../src/utils/cloudinary");
+const avatars = process.env.AVATAR_LINKS.split(",");
 
 const USER_SAFE_DATA = [ 
     "firstName" , 
@@ -41,7 +47,7 @@ exports.usersReceivedRequest = async (req,res) => {
         res.status(400).send("ERROR : "+error.message);
     }
 
-} ;
+};
 
 exports.usersSentRequestStatus = async (req , res) => {
     try {
@@ -91,7 +97,7 @@ exports.usersRequestConnection = async (req , res) => {
             message: err.message
         })
     }
-}
+};
 
 exports.usersFeed = async(req,res) => {
     try {
@@ -126,12 +132,18 @@ exports.usersFeed = async(req,res) => {
         console.log(hideUsersFromFeed);
 
         let users = await User.find({
-            $and: [
-                { _id: { $nin: Array.from(hideUsersFromFeed) } },
-                { _id: { $ne: loggedInUser._id } },
-            ],
+        $and: [
+            { _id: { $nin: Array.from(hideUsersFromFeed) } },
+            { _id: { $ne: loggedInUser._id } },
+            { uploadedImages: { $exists: true, $ne: [], $not: { $size: 0 } } },
+            { dateOfBirth: { $exists: true, $ne: "" } },
+            { location: { $exists: true, $ne: "" } },
+            { bio: { $exists: true, $ne: "" } },
+            { skills: { $exists: true, $not: { $size: 0 } } }
+        ],
         })
         .select(USER_SAFE_DATA);
+
 
         // Sort users: 
         // 1. Elite first
@@ -171,4 +183,82 @@ exports.usersFeed = async(req,res) => {
             message: error.message,
         });
     }
-}
+};
+
+exports.deleteUserAccount = async(req,res) => {
+    try {
+        const loggedInUser = req.user;
+        const { reason } = req.body;
+        const { 
+            _id ,
+            profileImage ,
+            uploadedImages 
+        } = loggedInUser;
+
+
+        // Save metadata before deletion
+        await DeletedUserFeedback.create({
+            reason,
+            metadata: {
+                membershipType: loggedInUser.membershipType,
+                gender: loggedInUser.gender,
+                swipesCount: loggedInUser.swipes || 0,
+                age: loggedInUser.dateOfBirth
+                ? Math.floor((Date.now() - new Date(loggedInUser.dateOfBirth)) / (1000 * 60 * 60 * 24 * 365))
+                : undefined,
+            },
+        });
+
+        // Deleting the profile image if the user has uploaded it.
+        const isThisUsersUploadedProfileImage = (publicId) => {
+            return !avatars.includes(publicId) || publicId !== "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344";   
+        };
+
+        if( isThisUsersUploadedProfileImage( profileImage ) ){
+            const result = await cloudinary.uploader.destroy(profileImage);
+            if (result.result !== "ok") {
+                return res.status(500).json({ error: "Failed to delete image from Cloudinary." });
+            }
+        }
+
+        // Deleting the users Uploaded Images.
+        for (const publicId of uploadedImages) {
+            const result = await cloudinary.uploader.destroy(publicId);
+            if (result.result !== "ok") {
+                return res.status(500).json({ error: "Failed to delete image from Cloudinary." });
+            }
+        }
+
+
+        // Deleting from the connections request with help of userId.
+        // Delete connection requests (from or to this user)
+        await ConnectionRequestModel.deleteMany({
+        $or: [
+            { fromUserId: _id },
+            { toUserId: _id }
+        ]
+        });
+
+        // Deleting all it's chats with the help of userId.
+        // Delete chats containing this user as a participant
+        await Chat.deleteMany({
+        participants: _id
+        });
+
+
+        // Deleting from the contact messages with the help of userId.
+        await Contact.deleteMany({ userId: _id });
+
+
+        // ✅ 6. Delete user document
+        await User.findByIdAndDelete(_id);
+
+        return res.status(200).json({
+        message: "User account and associated data deleted successfully."
+        });    
+    } 
+    catch (error) {
+        console.error("Error deleting account:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+};
