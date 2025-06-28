@@ -52,7 +52,9 @@ exports.manualSignIn = async (req,res) => {
 
         const user = await User.findOne({emailId : emailId});
         if (!user) {
-            throw new Error("Email id is not present !!");
+            return res.status(500).json({
+                message: "Invalid Credentials !!"
+            });
         }
 
         const isPasswordValid = await user.validatePassword(password);
@@ -87,6 +89,7 @@ exports.manualSignIn = async (req,res) => {
 
     }
     catch(err){
+        console.log("ERR : "+err);
         res.status(500).json({
             message: "Internal Server Error"
         });

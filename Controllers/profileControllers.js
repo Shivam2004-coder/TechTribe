@@ -4,6 +4,7 @@ const cloudinary = require("../src/utils/cloudinary");
 const { v4: uuidv4 } = require('uuid'); // At the top
 const avatars = process.env.AVATAR_LINKS.split(",");
 
+
 exports.deleteSavedImages = async (req, res) => {
     try {
         const { uploadedImages , profileImage } = req.body;
@@ -50,7 +51,7 @@ exports.deleteSingleImage = async (req, res) => {
 
         const isAvatar = (publicId) => {
             if (isProfile) {
-                return avatars.includes(publicId) || publicId === "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344";   
+                return avatars.includes(publicId) || publicId === process.env.DEFAULT_PROFILE_IMAGE;   
             }
             return !currentUploadedImages.includes(publicId);
         };

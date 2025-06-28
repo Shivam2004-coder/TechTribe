@@ -211,7 +211,7 @@ exports.deleteUserAccount = async(req,res) => {
 
         // Deleting the profile image if the user has uploaded it.
         const isThisUsersUploadedProfileImage = (publicId) => {
-            return !avatars.includes(publicId) || publicId !== "TechTribe_User_Profile_Avatar/Logos/Logo_b00c785c-9eae-43ca-b97b-4c12f4341344";   
+            return publicId !== '' || !avatars.includes(publicId) || publicId !== process.env.DEFAULT_PROFILE_IMAGE;   
         };
 
         if( isThisUsersUploadedProfileImage( profileImage ) ){
@@ -254,7 +254,7 @@ exports.deleteUserAccount = async(req,res) => {
         await User.findByIdAndDelete(_id);
 
         return res.status(200).json({
-        message: "User account and associated data deleted successfully."
+            message: "User account and associated data deleted successfully."
         });    
     } 
     catch (error) {
