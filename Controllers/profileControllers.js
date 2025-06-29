@@ -3,6 +3,8 @@ const {validateEditProfileData} = require("../src/utils/validation");
 const cloudinary = require("../src/utils/cloudinary");
 const { v4: uuidv4 } = require('uuid'); // At the top
 const avatars = process.env.AVATAR_LINKS.split(",");
+const vision = require('@google-cloud/vision');
+const client = new vision.ImageAnnotatorClient();
 
 
 exports.deleteSavedImages = async (req, res) => {
@@ -88,9 +90,44 @@ exports.deleteSingleImage = async (req, res) => {
 exports.uploadAnImage = async (req , res) => {
     try {
         const {image , isProfile} = req.body;
+        
+        console.log("Before result :");
+
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+        const imgBuffer = Buffer.from(base64Data, 'base64');
+
+        // Step 1: Moderate Image
+        const [result] = await client.safeSearchDetection({ image: { content: imgBuffer } });
+        
+        console.log("After result :");
+        const detections = result.safeSearchAnnotation;
+
+        const { adult, violence, racy, medical, spoof } = detections;
+
+        console.log("I am in image upload route !!");
+        console.log(result);
+
+        console.log(adult);
+        console.log(violence);
+        console.log(racy);
+        console.log(medical);
+        console.log(spoof);
+
+        const unsafeLabels = ['LIKELY', 'VERY_LIKELY'];
+        if (
+            unsafeLabels.includes(adult) ||
+            unsafeLabels.includes(racy)
+        )
+        {
+            return res.status(400).json({
+                message: 'Inappropriate image detected. Please upload a safe image.',
+                details: detections
+            });
+        }
+
+
 
         const loggedInUser = req.user;
-        console.log("I am in image upload route !!");
         // Upload an image
         const uniqueId = uuidv4(); 
         const folderName = `TechTribe_User_Profile_Avatar/User_Images/${loggedInUser.firstName}_${loggedInUser._id}`;
@@ -120,7 +157,7 @@ exports.uploadAnImage = async (req , res) => {
         });
         
     } catch (error) {
-        console.error("Image delete error:", error);
+        console.error("Image Upload error:", error);
         res.status(500).json({ 
             message: "Unable to upload your image." 
         });

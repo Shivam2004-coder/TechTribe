@@ -15,8 +15,10 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(express.json());
+// app.use(express.json());
+app.use(express.json({ limit: "100mb" })); // or higher
 app.use(cookieParser());
+// Increase request body size limit
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
