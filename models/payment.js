@@ -48,7 +48,7 @@ const paymentSchema = new mongoose.Schema({
             default: ''
         },
         membershipPlanIdx: {
-            type: Date,
+            type: String,
             default: ''
         },
         validity: {
