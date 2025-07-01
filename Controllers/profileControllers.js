@@ -115,13 +115,13 @@ exports.uploadAnImage = async (req , res) => {
         const { adult, violence, racy, medical, spoof } = detections;
 
         console.log("I am in image upload route !!");
-        console.log(result);
+        // console.log(result);
 
-        console.log(adult);
-        console.log(violence);
-        console.log(racy);
-        console.log(medical);
-        console.log(spoof);
+        // console.log(adult);
+        // console.log(violence);
+        // console.log(racy);
+        // console.log(medical);
+        // console.log(spoof);
 
         const unsafeLabels = ['LIKELY', 'VERY_LIKELY'];
         if (
@@ -238,3 +238,54 @@ exports.profileEdit = async (req,res) => {
         });
     }
 };
+
+exports.checkImageSafety = async ( req , res ) => {
+    try{
+
+        const {image } = req.body;
+        
+        console.log("Before result :");
+
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+        const imgBuffer = Buffer.from(base64Data, 'base64');
+
+        // Step 1: Moderate Image
+        const [result] = await client.safeSearchDetection({ image: { content: imgBuffer } });
+        
+        console.log("After result :");
+        const detections = result.safeSearchAnnotation;
+
+        const { adult, violence, racy, medical, spoof } = detections;
+
+        console.log("I am in Check Safety Image upload route !!");
+        console.log(result);
+
+        console.log(adult);
+        console.log(violence);
+        console.log(racy);
+        console.log(medical);
+        console.log(spoof);
+
+        const unsafeLabels = ['LIKELY', 'VERY_LIKELY'];
+        if (
+            unsafeLabels.includes(adult) ||
+            unsafeLabels.includes(racy)
+        )
+        {
+            return res.status(400).json({
+                message: 'Inappropriate image detected. Please upload a safe image.',
+                details: detections
+            });
+        }
+
+        res.status(200).json({
+            message: "ok"
+        });
+    }
+    catch( err ){
+        console.error("Image Upload error:", err);
+        res.status(500).json({ 
+            message: "API is not accepting the request !!", 
+        });
+    }
+}
