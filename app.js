@@ -31,10 +31,28 @@ require('dotenv').config();
 
 const http = require("http");
 
+const allowedOrigins = [
+  'https://techtribe-f.onrender.com',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log(`Blocked CORS request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
+
+app.options('*', cors());
+
+
+app.options('*', cors());
+
 
 // app.use(express.json());
 app.use(express.json({ limit: "100mb" })); // or higher
