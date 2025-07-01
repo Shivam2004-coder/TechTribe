@@ -112,7 +112,8 @@ exports.googleSignIn = async (req, res) => {
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
         );
         const { email } = userRes.data;
-        let user = await User.findOne({ email });
+        console.log(email);
+        let user = await User.findOne({ emailId: email });
         if (user) {
 
             // Create a JWT token

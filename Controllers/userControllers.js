@@ -125,8 +125,8 @@ exports.usersFeed = async(req,res) => {
 
         const hideUsersFromFeed = new Set();
         connectionRequests.forEach((req) => {
-            hideUsersFromFeed.add(req.fromUserId);
-            hideUsersFromFeed.add(req.toUserId);
+            hideUsersFromFeed.add(String(req.fromUserId._id || req.fromUserId));
+            hideUsersFromFeed.add(String(req.toUserId._id || req.toUserId));
         });
 
         console.log(hideUsersFromFeed);
@@ -137,7 +137,7 @@ exports.usersFeed = async(req,res) => {
             { _id: { $ne: loggedInUser._id } },
             { uploadedImages: { $exists: true, $ne: [], $not: { $size: 0 } } },
             { dateOfBirth: { $exists: true, $ne: "" } },
-            { location: { $exists: true, $ne: "" } },
+            { livingIn: { $exists: true, $ne: "" } },
             { bio: { $exists: true, $ne: "" } },
             { skills: { $exists: true, $not: { $size: 0 } } }
         ],
