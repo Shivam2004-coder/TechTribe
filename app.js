@@ -6,6 +6,27 @@ const cors = require("cors");
 const cloudinary = require("./src/utils/cloudinary");
 require('dotenv').config();
 
+// const fs = require('fs');
+// const path = require('path');
+
+// // Decode and write JSON file only if env is set
+// if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64) {
+//     const filePath = path.join(__dirname, 'secrets', 'google-service-account.json');
+
+//     // Ensure the secrets directory exists
+//     fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+//     // Write the file from base64
+//     fs.writeFileSync(
+//         filePath,
+//         Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64, 'base64').toString('utf-8')
+//     );
+
+//     // Set the environment variable so Google Vision SDK can use it
+//     process.env.GOOGLE_APPLICATION_CREDENTIALS = filePath;
+// }
+
+
 // require("./src/utils/cronjob");
 
 const http = require("http");

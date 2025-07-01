@@ -3,8 +3,18 @@ const {validateEditProfileData} = require("../src/utils/validation");
 const cloudinary = require("../src/utils/cloudinary");
 const { v4: uuidv4 } = require('uuid'); // At the top
 const avatars = process.env.AVATAR_LINKS.split(",");
+// const vision = require('@google-cloud/vision');
+// const client = new vision.ImageAnnotatorClient();
 const vision = require('@google-cloud/vision');
-const client = new vision.ImageAnnotatorClient();
+
+const credentials = JSON.parse(
+  Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64, 'base64').toString('utf-8')
+);
+
+const client = new vision.ImageAnnotatorClient({
+  credentials,
+});
+
 
 
 exports.deleteSavedImages = async (req, res) => {
