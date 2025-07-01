@@ -29,8 +29,12 @@ exports.manualSignUp = async (req, res) => {
         const token = await savedUser.getJWT();
     
         res.cookie("token", token, {
-            expires: new Date(Date.now() + 8 * 360000),
+            httpOnly: true,               // ✅ Prevent JS from accessing cookie
+            secure: true,                 // ✅ Required on HTTPS (Render is HTTPS)
+            sameSite: "None",             // ✅ Required for cross-site cookies
+            expires: new Date(Date.now() + 8 * 360000) // You can keep this
         });
+
     
         return res.status(200).json({ 
             message: "User Added Successfully !!", 
@@ -66,9 +70,13 @@ exports.manualSignIn = async (req,res) => {
             token.then((token)=>{
                 console.log("Here it is : "+token);
     
-                res.cookie("token" , token , {
-                    expires: new Date(Date.now() + 8 * 360000),
+                res.cookie("token", token, {
+                    httpOnly: true,               // ✅ Prevent JS from accessing cookie
+                    secure: true,                 // ✅ Required on HTTPS (Render is HTTPS)
+                    sameSite: "None",             // ✅ Required for cross-site cookies
+                    expires: new Date(Date.now() + 8 * 360000) // You can keep this
                 });
+
     
                 res.status(200).json({
                     message: "You are successfully Logged In",
@@ -111,9 +119,13 @@ exports.googleSignIn = async (req, res) => {
             const token = user.getJWT();
             token.then((token)=>{
     
-                res.cookie("token" , token , {
-                    expires: new Date(Date.now() + 8 * 360000),
+                res.cookie("token", token, {
+                    httpOnly: true,               // ✅ Prevent JS from accessing cookie
+                    secure: true,                 // ✅ Required on HTTPS (Render is HTTPS)
+                    sameSite: "None",             // ✅ Required for cross-site cookies
+                    expires: new Date(Date.now() + 8 * 360000) // You can keep this
                 });
+
     
                 res.status(200).json({
                     message: 'You are successfully Logged-In',
