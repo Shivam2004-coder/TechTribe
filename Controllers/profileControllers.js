@@ -177,8 +177,6 @@ exports.uploadAnImage = async (req , res) => {
 exports.profileView = async (req,res) => {
     try{
         const user = req.user;
-        console.log("I am in the profile View!!");
-        console.log(user);
 
         let isUpdated = false;
 
