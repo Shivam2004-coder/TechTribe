@@ -50,6 +50,7 @@ exports.createYourPayment = async (req, res) => {
             notes: {
                 firstName: order.notes.firstName,
                 lastName: order.notes.lastName,
+                emailId: order.notes.emailId,
                 membershipType: order.notes.membershipType,
                 membershipPlanIdx: order.notes.membershipPlanIdx,
                 validity: order.notes.validity

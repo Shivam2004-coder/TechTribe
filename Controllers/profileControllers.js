@@ -177,6 +177,10 @@ exports.uploadAnImage = async (req , res) => {
 exports.profileView = async (req,res) => {
     try{
         const user = req.user;
+        console.log("I am in the profile View!!");
+        console.log(user);
+
+        let isUpdated = false;
 
         // 🔁 Check if premium membership has expired
         const now = new Date();
@@ -188,6 +192,7 @@ exports.profileView = async (req,res) => {
         {
             user.membershipType = "Free";
             user.membershipExpiresAt = undefined;
+            isUpdated = true;
         }
 
         const lastSwipe = new Date(user.lastSwipeDate);
@@ -197,7 +202,11 @@ exports.profileView = async (req,res) => {
         if (isNewDay) {
             user.swipes = 0;
             user.lastSwipeDate = now;
-            await user.save(); // save only if swipes were reset
+            isUpdated = true;
+        }
+        
+        if (isUpdated) {
+            await user.save(); // ✅ Save only if necessary
         }
 
         res.status(200).json({

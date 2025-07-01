@@ -46,9 +46,16 @@ const paymentSchema = new mongoose.Schema({
         membershipType: {
             type: String,
             default: ''
+        },
+        membershipPlanIdx: {
+            type: Date,
+            default: ''
+        },
+        validity: {
+            type: String,
+            default: ''
         }
     }
-
 },{timestamp: true});  
 
 module.exports = mongoose.model('Payment', paymentSchema);
