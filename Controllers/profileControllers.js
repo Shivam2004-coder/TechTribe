@@ -76,15 +76,15 @@ exports.deleteSingleImage = async (req, res) => {
         // console.log("avatars.includes(publicId) : "+avatars.includes(publicId));
         if (!isAvatar(publicId)) {
         
-            console.log(publicId);
+            // console.log(publicId);
 
             const result = await cloudinary.uploader.destroy(publicId);
     
             if (result.result !== "ok") {
                 return res.status(500).json({ error: "Failed to delete image from Cloudinary." });
             }
-            console.log("After Image deletion !!");
-            console.log(result);
+            // console.log("After Image deletion !!");
+            // console.log(result);
         }
 
         res.status(200).json({ message: "Image deleted successfully." });
@@ -101,7 +101,7 @@ exports.uploadAnImage = async (req , res) => {
     try {
         const {image , isProfile} = req.body;
         
-        console.log("Before result :");
+        // console.log("Before result :");
 
         const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
         const imgBuffer = Buffer.from(base64Data, 'base64');
@@ -109,12 +109,12 @@ exports.uploadAnImage = async (req , res) => {
         // Step 1: Moderate Image
         const [result] = await client.safeSearchDetection({ image: { content: imgBuffer } });
         
-        console.log("After result :");
+        // console.log("After result :");
         const detections = result.safeSearchAnnotation;
 
         const { adult, violence, racy, medical, spoof } = detections;
 
-        console.log("I am in image upload route !!");
+        // console.log("I am in image upload route !!");
         // console.log(result);
 
         // console.log(adult);
@@ -143,8 +143,8 @@ exports.uploadAnImage = async (req , res) => {
         const folderName = `TechTribe_User_Profile_Avatar/User_Images/${loggedInUser.firstName}_${loggedInUser._id}`;
         const publicId = isProfile ? `${loggedInUser.firstName}_Profile_Image_${uniqueId}` : `${loggedInUser.firstName}_Image_${uniqueId}`;
 
-        console.log("folderName : " + folderName);
-        console.log("publicId : " + publicId);
+        // console.log("folderName : " + folderName);
+        // console.log("publicId : " + publicId);
 
         const uploadResult = await cloudinary.uploader
         .upload(
@@ -225,8 +225,8 @@ exports.profileEdit = async (req,res) => {
             throw new Error("Invalid Edit Request !!");
         }
 
-        console.log("i am in the profile edit route !!");
-        console.log("REQ body : "+req.body);
+        // console.log("i am in the profile edit route !!");
+        // console.log("REQ body : "+req.body);
 
         const loggedInUser = req.user;
     
@@ -251,7 +251,7 @@ exports.checkImageSafety = async ( req , res ) => {
 
         const {image } = req.body;
         
-        console.log("Before result :");
+        // console.log("Before result :");
 
         const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
         const imgBuffer = Buffer.from(base64Data, 'base64');
@@ -259,19 +259,19 @@ exports.checkImageSafety = async ( req , res ) => {
         // Step 1: Moderate Image
         const [result] = await client.safeSearchDetection({ image: { content: imgBuffer } });
         
-        console.log("After result :");
+        // console.log("After result :");
         const detections = result.safeSearchAnnotation;
 
         const { adult, violence, racy, medical, spoof } = detections;
 
-        console.log("I am in Check Safety Image upload route !!");
-        console.log(result);
+        // console.log("I am in Check Safety Image upload route !!");
+        // console.log(result);
 
-        console.log(adult);
-        console.log(violence);
-        console.log(racy);
-        console.log(medical);
-        console.log(spoof);
+        // console.log(adult);
+        // console.log(violence);
+        // console.log(racy);
+        // console.log(medical);
+        // console.log(spoof);
 
         const unsafeLabels = ['LIKELY', 'VERY_LIKELY'];
         if (

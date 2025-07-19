@@ -70,7 +70,7 @@ exports.createYourPayment = async (req, res) => {
 
 exports.yourPaymentWebhook = async (req, res) => {
     try{
-        console.log("Webhook Called !");
+        // console.log("Webhook Called !");
         const webhookSignature = req.get('x-razorpay-signature');
         validateWebhookSignature(
             JSON.stringify(req.body),
@@ -87,7 +87,7 @@ exports.yourPaymentWebhook = async (req, res) => {
         const payment = await Payment.findOne({ orderId : paymentDetails.order_id });
         payment.status = paymentDetails.status;
         await payment.save();
-        console.log("Payment saved !!");
+        // console.log("Payment saved !!");
 
         // update the user as premium member
         const user = await User.findById({ _id: payment.userId });
@@ -99,7 +99,7 @@ exports.yourPaymentWebhook = async (req, res) => {
         user.membershipExpiresAt = new Date(Date.now() + durationInDays * 24 * 60 * 60 * 1000);
 
         await user.save();
-        console.log("User Saved !!");
+        // console.log("User Saved !!");
         
         if (req.body.event === 'payment.captured') {
             

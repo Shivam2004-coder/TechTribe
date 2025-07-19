@@ -97,8 +97,8 @@ exports.reviewTheStatusOfRequestReceivedOrSent = async (req,res) => {
             // status: { $in: ["interested", "accepted"] }
         });
 
-        console.log("I am in the request review route !!");
-        console.log("connection : "+connectionRequest);
+        // console.log("I am in the request review route !!");
+        // console.log("connection : "+connectionRequest);
 
 
         if (!connectionRequest) {

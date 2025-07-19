@@ -51,7 +51,7 @@ exports.manualSignUp = async (req, res) => {
 }
 exports.manualSignIn = async (req,res) => {
     try{
-        // console.log("Login request received:", req.body); // Debug log
+        // console.log("Login request received:", req.body); 
         const {emailId , password } = req.body;
 
         const user = await User.findOne({emailId : emailId});
@@ -68,7 +68,7 @@ exports.manualSignIn = async (req,res) => {
             // Create a JWT token
             const token = user.getJWT();
             token.then((token)=>{
-                console.log("Here it is : "+token);
+                // console.log("Here it is : "+token);
     
                 res.cookie("token", token, {
                     httpOnly: true,               // ✅ Prevent JS from accessing cookie
@@ -97,7 +97,7 @@ exports.manualSignIn = async (req,res) => {
 
     }
     catch(err){
-        console.log("ERR : "+err);
+        // console.log("ERR : "+err);
         res.status(500).json({
             message: "Internal Server Error"
         });
@@ -112,7 +112,7 @@ exports.googleSignIn = async (req, res) => {
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
         );
         const { email } = userRes.data;
-        console.log(email);
+        // console.log(email);
         let user = await User.findOne({ emailId: email });
         if (user) {
 
@@ -135,20 +135,20 @@ exports.googleSignIn = async (req, res) => {
                 });
             })
             .catch((err) => {
-                console.log("ERROR In googleSignIn route controller inside TRY-CATCH if block : "+err.message);
+                // console.log("ERROR In googleSignIn route controller inside TRY-CATCH if block : "+err.message);
                 res.status(400).json({
                     message: "JWT token is not created !!"
                 });
             })
         }
         else{
-            console.log("ERROR In googleSignIn route controller inside TRY-CATCH else block : ");
+            // console.log("ERROR In googleSignIn route controller inside TRY-CATCH else block : ");
             res.status(401).json({
                 message: "This Google account is not linked to any existing account. Please sign up first or use the email and password you registered with.",
             });
         }
     } catch (err) {
-        console.log("ERROR In googleSignIn route controller inside CATCH block : "+err.message);
+        // console.log("ERROR In googleSignIn route controller inside CATCH block : "+err.message);
         res.status(500).json({
             message: "Internal Server Error",
         })

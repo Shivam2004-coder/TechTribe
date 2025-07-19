@@ -129,7 +129,7 @@ exports.usersFeed = async(req,res) => {
             hideUsersFromFeed.add(String(req.toUserId._id || req.toUserId));
         });
 
-        console.log(hideUsersFromFeed);
+        // console.log(hideUsersFromFeed);
 
         let users = await User.find({
         $and: [
