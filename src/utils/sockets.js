@@ -13,11 +13,22 @@ const getSecretRoomId = (userId, targetUserId) => {
 
 const initializeSocket = (server) => {
     
-    const io = socket(server , {
+    // const io = socket(server , {
+    //     cors: {
+    //         origin: "http://localhost:5173",
+    //     },
+    // });
+    const io = socket(server, {
         cors: {
-            origin: "http://localhost:5173",
+            origin: [
+            "http://localhost:5173",                 // for local dev
+            "https://your-frontend.onrender.com"     // ✅ your deployed frontend URL
+            ],
+            methods: ["GET", "POST"],
+            credentials: true
         },
     });
+
     
     io.on("connection" , (socket) => {
         // Handle Events.....
