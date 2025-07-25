@@ -87,6 +87,7 @@ exports.usersRequestConnection = async (req , res) => {
             }
             return row.fromUserId;
         });
+        
 
         res.json({
             data
@@ -94,7 +95,7 @@ exports.usersRequestConnection = async (req , res) => {
         
     } catch (error) {
         res.status(400).json({
-            message: err.message
+            message: error.message
         })
     }
 };
@@ -211,8 +212,22 @@ exports.deleteUserAccount = async(req,res) => {
 
         // Deleting the profile image if the user has uploaded it.
         const isThisUsersUploadedProfileImage = (publicId) => {
-            return publicId !== '' || !avatars.includes(publicId) || publicId !== process.env.DEFAULT_PROFILE_IMAGE;   
+            console.log("Checking if this is user's uploaded profile image:", publicId);
+            console.log("Default profile image:", process.env.DEFAULT_PROFILE_IMAGE);
+
+            // If publicId is falsy, return false
+            if (!publicId) return false;
+
+            // If publicId is one of the default avatars, return false
+            if (avatars.includes(publicId)) return false;
+
+            // If publicId matches the default profile image, return false
+            if (publicId === process.env.DEFAULT_PROFILE_IMAGE) return false;
+
+            // Otherwise, this is an uploaded profile image
+            return true;
         };
+
 
         if( isThisUsersUploadedProfileImage( profileImage ) ){
             const result = await cloudinary.uploader.destroy(profileImage);

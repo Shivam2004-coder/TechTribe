@@ -50,8 +50,6 @@ app.use(cors({
 app.options('*', cors());
 
 
-app.options('*', cors());
-
 
 // app.use(express.json());
 app.use(express.json({ limit: "100mb" })); // or higher
