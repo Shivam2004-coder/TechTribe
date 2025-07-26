@@ -6,7 +6,7 @@ const { createYourPayment, yourPaymentWebhook, verifyYourPayment } = require('..
 
 paymentRouter.post("/payment/create", userAuth, createYourPayment );
 
-paymentRouter.post("/payment/webhook", yourPaymentWebhook );
+paymentRouter.post("/payment/razorpay/webhook", yourPaymentWebhook );
 
 paymentRouter.get("/payment/verify", userAuth, verifyYourPayment );
 
