@@ -29,10 +29,10 @@ exports.manualSignUp = async (req, res) => {
         const token = await savedUser.getJWT();
     
         res.cookie("token", token, {
-            httpOnly: true,               // ✅ Prevent JS from accessing cookie
-            secure: true,                 // ✅ Required on HTTPS (Render is HTTPS)
-            sameSite: "None",             // ✅ Required for cross-site cookies
-            expires: new Date(Date.now() + 8 * 360000) // You can keep this
+            httpOnly: true,               // Prevent JS from accessing cookie
+            secure: true,                 // Required on HTTPS (Render is HTTPS)
+            sameSite: "None",             // Required for cross-site cookies
+            expires: new Date(Date.now() + 8 * 360000) 
         });
 
     
@@ -71,10 +71,10 @@ exports.manualSignIn = async (req,res) => {
                 // console.log("Here it is : "+token);
     
                 res.cookie("token", token, {
-                    httpOnly: true,               // ✅ Prevent JS from accessing cookie
-                    secure: true,                 // ✅ Required on HTTPS (Render is HTTPS)
-                    sameSite: "None",             // ✅ Required for cross-site cookies
-                    expires: new Date(Date.now() + 8 * 360000) // You can keep this
+                    httpOnly: true,               // Prevent JS from accessing cookie
+                    secure: true,                 // Required on HTTPS (Render is HTTPS)
+                    sameSite: "None",             // Required for cross-site cookies
+                    expires: new Date(Date.now() + 8 * 360000) 
                 });
 
     

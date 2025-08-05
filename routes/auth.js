@@ -3,6 +3,17 @@ const { googleSignIn, manualSignUp, manualSignIn, manualSignOut } = require("../
 
 const authRouter = express.Router();
 
+
+authRouter.post("/signup", manualSignUp );  
+
+authRouter.get("/auth/google" , googleSignIn );
+
+authRouter.post("/login" , manualSignIn );
+
+authRouter.post("/logout" , manualSignOut );
+
+module.exports = authRouter;
+
 // authRouter.post("/signup" , async (req,res) => {
 //     try{
 //         console.log(req.body);
@@ -46,14 +57,3 @@ const authRouter = express.Router();
 //     }
 
 // });
-
-authRouter.post("/signup", manualSignUp );  
-
-authRouter.get("/auth/google" , googleSignIn );
-
-authRouter.post("/login" , manualSignIn );
-
-authRouter.post("/logout" , manualSignOut );
-
-
-module.exports = authRouter;

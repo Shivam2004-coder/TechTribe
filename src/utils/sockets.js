@@ -22,7 +22,7 @@ const initializeSocket = (server) => {
         cors: {
             origin: [
             "http://localhost:5173",                 // for local dev
-            "https://your-frontend.onrender.com"     // ✅ your deployed frontend URL
+            "https://your-frontend.onrender.com"     // deployed frontend URL
             ],
             methods: ["GET", "POST"],
             credentials: true
