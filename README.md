@@ -141,8 +141,8 @@ TechTribe-Backend/
 
 ### 1. Install dependencies
 
-bash
-npm install
+- **bash**
+- **npm install**
 
 ### 2. Set up .env
 
@@ -159,10 +159,10 @@ npm install
 - **GOOGLE_CLIENT_SECRET=<your_google_client_secret>**   
 
 ### 3. Run the server
-bash
-Copy
-Edit
-npm run dev
+- **bash**
+- **Copy**
+- **Edit**
+- **npm run dev**
 
 
 ### 👤 Author
