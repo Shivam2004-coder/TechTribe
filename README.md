@@ -116,11 +116,11 @@ TechTribe-Backend/
 
 ## 💳 Payment Flow
 
-1. User clicks a membership plan → Frontend sends POST to `/payment/create`.
-2. Razorpay order is created and opened on frontend.
-3. Razorpay sends webhook to `/payment/razorpay/webhook`.
-4. Webhook validates signature, updates payment status and membership.
-5. User can verify membership via `/payment/verify`.
+**1.** User clicks a membership plan → Frontend sends POST to `/payment/create`.
+**2.** Razorpay order is created and opened on frontend.
+**3.** Razorpay sends webhook to `/payment/razorpay/webhook`.
+**4.** Webhook validates signature, updates payment status and membership.
+**5.** User can verify membership via `/payment/verify`.
 
 ---
 
@@ -146,17 +146,17 @@ npm install
 
 ### 2. Set up .env
 
-env
-Copy
-Edit
-PORT=5000
-MONGO_URI=<your_mongo_connection_string>
-RAZORPAY_KEY_ID=<your_key>
-RAZORPAY_KEY_SECRET=<your_secret>
-RAZORPAY_WEBHOOK_SECRET=<your_webhook_secret>
-JWT_SECRET=<your_jwt_secret>
-GOOGLE_CLIENT_ID=<your_google_client_id>
-GOOGLE_CLIENT_SECRET=<your_google_client_secret>   
+- **env**
+- **Copy**
+- **Edit**
+- **PORT=5000**
+- **MONGO_URI=<your_mongo_connection_string>**
+- **RAZORPAY_KEY_ID=<your_key>**
+- **RAZORPAY_KEY_SECRET=<your_secret>**
+- **RAZORPAY_WEBHOOK_SECRET=<your_webhook_secret>**
+- **JWT_SECRET=<your_jwt_secret>**
+- **GOOGLE_CLIENT_ID=<your_google_client_id>**
+- **GOOGLE_CLIENT_SECRET=<your_google_client_secret>**   
 
 ### 3. Run the server
 bash
