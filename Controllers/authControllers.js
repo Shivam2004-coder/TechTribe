@@ -156,7 +156,7 @@ exports.googleSignIn = async (req, res) => {
 } 
 exports.manualSignOut = async (req,res) => {
     res.cookie("token" , null ,{
-        expiresIn : new Date(Date.now()),
+        expires : new Date(Date.now()),
     });
 
     res.send("Logout Successfull !!!");
